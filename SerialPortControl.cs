@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO.Ports;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
 
@@ -11,6 +12,7 @@ namespace WpfLibrary.SerialPortBase
     {
         private SerialPort? _serialPort = null;
 
+        #region 公开字段
         /// <summary>
         /// 接收事件延迟时间（ms）  
         /// <para>欲接收字节长度*10/波特率=需要延迟的时间</para>
@@ -42,7 +44,9 @@ namespace WpfLibrary.SerialPortBase
         /// 是否打开串口
         /// </summary>
         public bool IsPortOpen { get { return _serialPort != null && _serialPort.IsOpen; } }
+        #endregion
 
+        #region 构造方法
         #region 默认构造函数，操作COM1
         /// <summary>
         /// 默认构造函数，操作COM1
@@ -118,8 +122,9 @@ namespace WpfLibrary.SerialPortBase
             SetSerialPortEvent();
         }
         #endregion
+        #endregion
 
-        #region 私有设置串口事件
+        #region 私有方法
 
         /// <summary>
         /// 设置数据的接收
@@ -135,7 +140,7 @@ namespace WpfLibrary.SerialPortBase
 
         #endregion
 
-        #region 设置串口参数
+        #region 公开方法
 
         /// <summary>
         /// 设置串口
@@ -159,13 +164,12 @@ namespace WpfLibrary.SerialPortBase
             _serialPort.BaudRate = baudRate;
             _serialPort.Parity = parityBit;
             _serialPort.DataBits = dataBits;
-            _serialPort.StopBits = stopBits;
-
-            
-            SetSerialPortEvent();
+            _serialPort.StopBits = stopBits;        
+            //SetSerialPortEvent();
         }
         #endregion
 
+        #region 接受事件
         #region 接收串口数据事件
         /// <summary>
         /// 接收串口数据事件
@@ -196,7 +200,6 @@ namespace WpfLibrary.SerialPortBase
         }
         #endregion
 
-
         #region 接收数据出错事件
         /// <summary>
         /// 接收数据出错事件
@@ -205,6 +208,87 @@ namespace WpfLibrary.SerialPortBase
         {
             System.Diagnostics.Debug.WriteLine("Error");
             // TODO: SerialPort_ErrorReceived
+        }
+        #endregion
+        #endregion
+
+        #region 发送方法
+        #region 发送数据string类型
+        /// <summary>
+        /// 发送文本型数据 默认：ASCII
+        /// </summary>
+        /// <param name="data">待发送的数据</param>
+        /// <param name="ishexstring">ture时，以Hex模式发送</param>
+        public void SendData(string data, bool ishexstring = false)
+        {
+            //发送数据
+            //禁止接收事件时直接退出
+            if (ReceiveEventFlag)
+            {
+                return;
+            }
+            try
+            {
+                if (_serialPort!.IsOpen)
+                {
+                    if (!ishexstring)
+                    {
+                        _serialPort.Write(data);
+                    }
+                    else
+                    {
+                        // 去掉空格、换行符和 "0x" 前缀
+                        string send_data = Regex.Replace(data, @"\s|0x", "");
+                        // 将字符串转换成 byte 数组
+                        byte[] bytes = new byte[(send_data.Length + 1) / 2];
+                        for (int i = 0; i < send_data.Length; i += 2)
+                        {
+                            bytes[i / 2] = Convert.ToByte(send_data.Substring(i, Math.Min(2, send_data.Length - i)), 16);
+                        }
+
+                        // 发送数据
+                        _serialPort.Write(bytes, 0, bytes.Length);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Media.SystemSounds.Beep.Play();
+                Debug.WriteLine(ex.Message);
+                throw;
+            }
+
+        }
+        #endregion
+
+        #region 发送数据byte类型
+        /// <summary>
+        /// 发送字节型数据
+        /// </summary>
+        /// <param name="data">待发送的数据</param>
+        /// <param name="offset">从第几位开始发送</param>
+        /// <param name="count">发送长度</param>
+        public void SendData(byte[] data, int offset, int count)
+        {
+            //禁止接收事件时直接退出
+            if (ReceiveEventFlag)
+            {
+                return;
+            }
+            try
+            {
+                if (_serialPort!.IsOpen)
+                {
+                    //_serialPort.DiscardInBuffer();//清空接收缓冲区
+                    _serialPort.Write(data, offset, count);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Media.SystemSounds.Beep.Play();
+                Debug.WriteLine(ex.Message);
+                throw;
+            }
         }
         #endregion
 
@@ -256,13 +340,14 @@ namespace WpfLibrary.SerialPortBase
                 catch (Exception ex)
                 {
                     ReceiveEventFlag = false;
-                    Debug.WriteLine(ex);
+                    Debug.WriteLine(ex.Message);
                     throw;
                 }
             }
             return false;
 
         }
+        #endregion
         #endregion
 
         #region 静态方法
@@ -298,7 +383,6 @@ namespace WpfLibrary.SerialPortBase
             }
             return contains;
         }
-
         #endregion
 
         #region 十六进制字符串转字节型
@@ -316,7 +400,7 @@ namespace WpfLibrary.SerialPortBase
             for (int i = 0; i <= ByteStrings.Length - 1; i++)
             {
                 //ByteOut[i] = System.Text.Encoding.ASCII.GetBytes(ByteStrings[i]);
-                ByteOut[i] = Byte.Parse(ByteStrings[i], System.Globalization.NumberStyles.HexNumber);
+                ByteOut[i] = byte.Parse(ByteStrings[i], System.Globalization.NumberStyles.HexNumber);
                 //ByteOut[i] =Convert.ToByte("0x" + ByteStrings[i]);
             }
             return ByteOut;
@@ -372,7 +456,7 @@ namespace WpfLibrary.SerialPortBase
             string StringOut = "";
             foreach (byte InByte in InBytes)
             {
-                StringOut += String.Format("{0:X2} ", InByte);
+                StringOut += string.Format("{0:X2} ", InByte);
             }
             return StringOut;
         }
