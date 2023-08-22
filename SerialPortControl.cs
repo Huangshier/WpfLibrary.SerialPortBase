@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO.Ports;
 using System.Text;
@@ -351,6 +352,13 @@ namespace WpfLibrary.SerialPortBase
         #endregion
 
         #region 静态方法
+
+        /// <summary>
+        /// 获取可用串口名称
+        /// </summary>
+        /// <returns></returns>
+        public static List<string> GetPortNames() => new(SerialPort.GetPortNames());
+
         #region 比较字节（暴力比较）
         /// <summary>
         /// Byte比较
