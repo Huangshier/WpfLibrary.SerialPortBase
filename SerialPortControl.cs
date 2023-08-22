@@ -142,7 +142,36 @@ namespace WpfLibrary.SerialPortBase
         #endregion
 
         #region 公开方法
+        #region 打开串口资源
+        /// <summary>
+        /// 打开串口资源
+        /// <returns>返回bool类型</returns>
+        /// </summary>
+        public bool OpenPort()
+        {
+            bool ok = false;
+            if (_serialPort == null) return ok;
+            //如果串口是打开的，先关闭
+            if (_serialPort.IsOpen)
+                _serialPort.Close();
+            //打开串口
+            _serialPort.Open();
+            ok = _serialPort.IsOpen;
+            return ok;
+        }
+        #endregion
 
+        #region 关闭串口资源
+        /// <summary>
+        /// 关闭串口资源,操作完成后,一定要关闭串口
+        /// </summary>
+        public void ClosePort()
+        {
+            //如果串口处于打开状态,则关闭
+            if (_serialPort != null && _serialPort.IsOpen)
+                _serialPort.Close();
+        }
+        #endregion
         /// <summary>
         /// 设置串口
         /// <para>comPortName：需要操作的COM口名称</para>
