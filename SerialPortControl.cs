@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace WpfLibrary.SerialPortBase
 {
@@ -322,10 +323,10 @@ namespace WpfLibrary.SerialPortBase
         }
         #endregion
 
-        #region 发送命令-回传确认
+        #region 发送命令-回传确认-byte
         /// <summary>
         /// 发送命令
-        /// 
+        /// byte全对比版本
         /// </summary>
         /// <param name="SendData">发送数据</param>
         /// <param name="ReceiveData">接收数据</param>
@@ -360,6 +361,75 @@ namespace WpfLibrary.SerialPortBase
                                 ReceiveEventFlag = false;      //打开事件
                                 return true;
                             }
+                        }
+
+                    }
+
+                    ReceiveEventFlag = false;      //打开事件
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    ReceiveEventFlag = false;
+                    Debug.WriteLine(ex.Message);
+                    throw;
+                }
+            }
+            return false;
+
+        }
+        #endregion
+        #region 发送命令-回传确认-string
+        /// <summary>
+        /// 发送命令
+        /// string对比版本 默认全相等对比
+        /// </summary>
+        /// <param name="SendData">发送数据</param>
+        /// <param name="ReceiveData">接收数据</param>
+        /// <param name="Overtime">超时时间，默认500ms</param>
+        /// <param name="AllContrast">是否全对比，默认全对比</param>
+        /// <returns></returns>
+        public bool SendCommand(string SendData, string ReceiveData, int Overtime = 500, bool AllContrast = true)
+        {
+            if (_serialPort!.IsOpen)
+            {
+                try
+                {
+                    ReceiveEventFlag = true;        //关闭接收事件
+
+                    _serialPort.DiscardInBuffer();  //清空接收缓冲区                
+
+                    _serialPort.Write(SendData);
+
+                    int num = 0, outtime = Overtime / 10;
+
+                    int len = Encoding.UTF8.GetBytes(ReceiveData).Length;
+
+                    while (num++ < outtime)
+                    {
+                        Thread.Sleep(10);
+
+                        if (_serialPort.BytesToRead >= len)
+                        {
+                            byte[] receivedata = new byte[_serialPort.BytesToRead];
+                            _serialPort.Read(receivedata, 0, _serialPort.BytesToRead);
+                            // 接收文本
+                            string recdata = Encoding.Default.GetString(receivedata);
+
+                            // 判断相等
+                            if (AllContrast)
+                            {
+                                // 不相等 继续循环
+                                if (!string.Equals(recdata, ReceiveData, StringComparison.Ordinal)) 
+                                    continue;
+                            }
+                            else
+                            {
+                                if (!recdata.Contains(ReceiveData))
+                                    continue;
+                            }
+                            ReceiveEventFlag = false;      //打开事件
+                            return true;
                         }
 
                     }
