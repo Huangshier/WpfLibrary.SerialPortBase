@@ -462,6 +462,24 @@ namespace WpfLibrary.SerialPortBase
         }
         #endregion
 
+        #region 十六进制字符串转字节型
+        /// <summary>
+        /// string转byte
+        /// </summary>
+        /// <param name="hexString"></param>
+        /// <returns></returns>
+        public static byte[] StringToByteArray(string hexString)
+        {
+            int length = hexString.Length / 2;
+            byte[] data = new byte[length];
+            for (int i = 0; i < length; i++)
+            {
+                data[i] = Convert.ToByte(hexString.Substring(i * 2, 2), 16);
+            }
+            return data;
+        }
+        #endregion
+
         #region 字节型转十六进制字符串
         /// <summary>
         /// 字节数组转16进制字符串1
@@ -560,21 +578,7 @@ namespace WpfLibrary.SerialPortBase
             return crcString;
         }
 
-        /// <summary>
-        /// string转byte
-        /// </summary>
-        /// <param name="hexString"></param>
-        /// <returns></returns>
-        public static byte[] StringToByteArray(string hexString)
-        {
-            int length = hexString.Length / 2;
-            byte[] data = new byte[length];
-            for (int i = 0; i < length; i++)
-            {
-                data[i] = Convert.ToByte(hexString.Substring(i * 2, 2), 16);
-            }
-            return data;
-        }
+
         #endregion
 
         #region CRC-16/MODBUS算法
@@ -645,6 +649,70 @@ namespace WpfLibrary.SerialPortBase
             return crcString;
         }
 
+        #endregion
+
+        #region 累加和校验
+        /// <summary>
+        /// 累加和校验
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns>byte</returns>
+        public static byte SumToByte(byte[] data)
+        {
+            byte sum = 0;
+            foreach (byte b in data)
+            {
+                sum += b;
+            }
+            return sum;
+        }
+
+        /// <summary>
+        /// 累加和校验
+        /// </summary>
+        /// <param name="hexString">十六进制文本</param>
+        /// <returns>byte</returns>
+        public static byte SumToByte(string hexString)
+        {
+            byte[] data = StringToByteArray(hexString);
+            byte sum = 0;
+            foreach (byte b in data)
+            {
+                sum += b;
+            }
+            return sum;
+        }
+
+        /// <summary>
+        /// 累加和校验
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns>string</returns>
+        public static string SumToString(byte[] data)
+        {
+            byte sum = 0;
+            foreach (byte b in data)
+            {
+                sum += b;
+            }
+            return sum.ToString("X2");
+        }
+
+        /// <summary>
+        /// 累加和校验
+        /// </summary>
+        /// <param name="hexString">十六进制文本</param>
+        /// <returns>string</returns>
+        public static string SumToString(string hexString)
+        {
+            byte[] data = StringToByteArray(hexString);
+            byte sum = 0;
+            foreach (byte b in data)
+            {
+                sum += b;
+            }
+            return sum.ToString("X2");
+        }
         #endregion
         #endregion
 
