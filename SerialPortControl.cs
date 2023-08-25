@@ -6,7 +6,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace WpfLibrary.SerialPortBase
 {
@@ -195,7 +194,7 @@ namespace WpfLibrary.SerialPortBase
             _serialPort.BaudRate = baudRate;
             _serialPort.Parity = parityBit;
             _serialPort.DataBits = dataBits;
-            _serialPort.StopBits = stopBits;        
+            _serialPort.StopBits = stopBits;
             //SetSerialPortEvent();
         }
         #endregion
@@ -420,7 +419,7 @@ namespace WpfLibrary.SerialPortBase
                             if (AllContrast)
                             {
                                 // 不相等 继续循环
-                                if (!string.Equals(recdata, ReceiveData, StringComparison.Ordinal)) 
+                                if (!string.Equals(recdata, ReceiveData, StringComparison.Ordinal))
                                     continue;
                             }
                             else
@@ -782,6 +781,19 @@ namespace WpfLibrary.SerialPortBase
                 sum += b;
             }
             return sum.ToString("X2");
+        }
+        #endregion
+
+        #region 只允许数字和ABCDEF
+        /// <summary>
+        /// 正则表达式判断只允许数字和ABCDEF
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns>true为不符合 false为符合</returns>
+        public static bool IsTextAllowed(string text)
+        {
+            Regex regex = new("[0-9a-fA-F]+$"); // 只允许数字和ABCDEF
+            return regex.IsMatch(text);
         }
         #endregion
         #endregion
