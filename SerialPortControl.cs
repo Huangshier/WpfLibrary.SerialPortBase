@@ -172,6 +172,7 @@ namespace WpfLibrary.SerialPortBase
                 _serialPort.Close();
         }
         #endregion
+
         /// <summary>
         /// 设置串口
         /// <para>comPortName：需要操作的COM口名称</para>
@@ -378,6 +379,7 @@ namespace WpfLibrary.SerialPortBase
 
         }
         #endregion
+
         #region 发送命令-回传确认-string
         /// <summary>
         /// 发送命令
