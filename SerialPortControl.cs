@@ -11,7 +11,7 @@ namespace WpfLibrary.SerialPortBase
 {
     public class SerialPortControl : IDisposable
     {
-        private SerialPort? _serialPort = null;
+        private readonly SerialPort? _serialPort;
 
         #region ¹«¿ª×Ö¶Î
         /// <summary>
