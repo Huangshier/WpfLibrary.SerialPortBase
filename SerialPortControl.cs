@@ -615,7 +615,7 @@ namespace WpfLibrary.SerialPortBase
             }
             byte[] crcBytes = BitConverter.GetBytes(crc);
             //Array.Reverse(crcBytes); // 需要翻转字节序
-            string crcString = BitConverter.ToString(crcBytes).Replace("-", "");
+            string crcString = Convert.ToHexString(crcBytes);
             return hexString + crcString;
         }
 
@@ -645,7 +645,7 @@ namespace WpfLibrary.SerialPortBase
             }
             byte[] crcBytes = BitConverter.GetBytes(crc);
             //Array.Reverse(crcBytes); // 需要翻转字节序
-            string crcString = BitConverter.ToString(crcBytes).Replace("-", "");
+            string crcString = Convert.ToHexString(crcBytes);
             return crcString;
         }
 
@@ -683,7 +683,7 @@ namespace WpfLibrary.SerialPortBase
             }
             byte[] crcBytes = BitConverter.GetBytes(crc);
             //Array.Reverse(crcBytes); // 需要翻转字节序
-            string crcString = BitConverter.ToString(crcBytes).Replace("-", "");
+            string crcString = Convert.ToHexString(crcBytes);
             return crcString;
         }
 
@@ -718,6 +718,37 @@ namespace WpfLibrary.SerialPortBase
             //Array.Reverse(crcBytes); // 需要翻转字节序
             string crcString = BitConverter.ToString(crcBytes).Replace("-", "");
             return crcString;
+        }
+
+        /// <summary>
+        /// ModbusCrc16
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <returns></returns>
+        public static byte[] GetModbusCrc16(byte[] bytes)
+        {
+            const ushort poly = 0xA001; // 多项式（0x8005的位反转形式）
+            ushort crc = 0xFFFF;
+
+            foreach (byte b in bytes)
+            {
+                crc ^= b;
+                for (int i = 0; i < 8; i++)
+                {
+                    if ((crc & 0x0001) != 0)
+                    {
+                        crc >>= 1;
+                        crc ^= poly;
+                    }
+                    else
+                    {
+                        crc >>= 1;
+                    }
+                }
+            }
+
+            // 返回小端序字节
+            return [(byte)(crc & 0xFF), (byte)(crc >> 8)];
         }
 
         #endregion
