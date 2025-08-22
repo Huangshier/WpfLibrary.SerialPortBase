@@ -158,6 +158,7 @@ namespace WpfLibrary.SerialPortBase
             _serialPort.Open();
             ok = _serialPort.IsOpen;
             return ok;
+
         }
         #endregion
 
@@ -215,17 +216,17 @@ namespace WpfLibrary.SerialPortBase
 
                 byte[] _data = new byte[_serialPort!.BytesToRead];
 
-                _serialPort.Read(_data, 0, _data.Length);
-
                 if (_data.Length == 0) { return; }
+
+                _serialPort.Read(_data, 0, _data.Length);           
 
                 DataReceived?.Invoke(sender, e, _data);
             }
             catch (Exception ex)
             {
 
-                System.Media.SystemSounds.Beep.Play();
-                MessageBox.Show(ex.Message);
+                Debug.WriteLine(ex.Message);
+                throw;
 
             }
         }
@@ -284,7 +285,6 @@ namespace WpfLibrary.SerialPortBase
             }
             catch (Exception ex)
             {
-                System.Media.SystemSounds.Beep.Play();
                 Debug.WriteLine(ex.Message);
                 throw;
             }
@@ -751,6 +751,29 @@ namespace WpfLibrary.SerialPortBase
             return [(byte)(crc & 0xFF), (byte)(crc >> 8)];
         }
 
+        public static ushort GetModbusCrc16(byte[] data, int start, int length)
+        {
+
+            ushort crc = 0xFFFF;
+            for (int i = start; i < start + length; i++)
+            {
+                crc ^= data[i];
+                for (int j = 0; j < 8; j++)
+                {
+                    if ((crc & 0x0001) != 0)
+                    {
+                        crc >>= 1;
+                        crc ^= 0xA001;
+                    }
+                    else
+                    {
+                        crc >>= 1;
+                    }
+                }
+            }
+            return crc;
+        }
+
         #endregion
 
         #region 累加和校验
@@ -829,6 +852,63 @@ namespace WpfLibrary.SerialPortBase
             return regex.IsMatch(text);
         }
         #endregion
+
+        /// <summary>
+        /// 从字节数组中指定位置取出4个字节，并按大端序转换成int。
+        /// </summary>
+        /// <param name="byteArray">字节数组。</param>
+        /// <param name="startIndex">起始位置（从0开始计数）。</param>
+        /// <returns>转换后的int值。</returns>
+        public static int BytesToInt32BigEndian(byte[] byteArray, int startIndex)
+        {
+            if (byteArray.Length < startIndex + 4)
+            {
+                Debug.WriteLine("byteArray长度不足");
+                return -1;
+            }
+            // 从指定位置取出4个字节
+            byte[] intBytes = new byte[4];
+            Array.Copy(byteArray, startIndex, intBytes, 0, 4);
+
+            // 如果系统是小端序，则反转字节顺序以符合大端序
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(intBytes);
+            }
+
+            // 将字节数组转换成int
+            int result = BitConverter.ToInt32(intBytes, 0);
+
+            return result;
+        }
+        /// <summary>
+        /// 从字节数组中指定位置取出2个字节，并按大端序转换成int16。
+        /// </summary>
+        /// <param name="byteArray">字节数组。</param>
+        /// <param name="startIndex">起始位置（从0开始计数）。</param>
+        /// <returns>转换后的int值。</returns>
+        public static short BytesToInt16BigEndian(byte[] byteArray, int startIndex)
+        {
+            if (byteArray.Length < startIndex + 2)
+            {
+                Debug.WriteLine("byteArray长度不足");
+                return -1;
+            }
+            // 从指定位置取出4个字节
+            byte[] intBytes = new byte[2];
+            Array.Copy(byteArray, startIndex, intBytes, 0, 2);
+
+            // 如果系统是小端序，则反转字节顺序以符合大端序
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(intBytes);
+            }
+
+            // 将字节数组转换成int
+            short result = BitConverter.ToInt16(intBytes, 0);
+
+            return result;
+        }
         #endregion
 
         #region 注销方法
