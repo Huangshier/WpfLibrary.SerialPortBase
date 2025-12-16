@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO.Ports;
@@ -13,44 +13,44 @@ namespace WpfLibrary.SerialPortBase
     {
         private readonly SerialPort? _serialPort;
 
-        #region ¹«¿ª×Ö¶Î
+        #region å…¬å¼€å­—æ®µ
         /// <summary>
-        /// ½ÓÊÕÊÂ¼şÑÓ³ÙÊ±¼ä£¨ms£©  
-        /// <para>Óû½ÓÊÕ×Ö½Ú³¤¶È*10/²¨ÌØÂÊ=ĞèÒªÑÓ³ÙµÄÊ±¼ä</para>
-        /// <para>Ä¬ÈÏ20ms£¬Àı£º20¸ö×Ö½Ú 200/9600Ô¼µÈÓÚ0.0208s</para>
+        /// æ¥æ”¶äº‹ä»¶å»¶è¿Ÿæ—¶é—´ï¼ˆmsï¼‰  
+        /// <para>æ¬²æ¥æ”¶å­—èŠ‚é•¿åº¦*10/æ³¢ç‰¹ç‡=éœ€è¦å»¶è¿Ÿçš„æ—¶é—´</para>
+        /// <para>é»˜è®¤20msï¼Œä¾‹ï¼š20ä¸ªå­—èŠ‚ 200/9600çº¦ç­‰äº0.0208s</para>
         /// </summary>
         public int ReceiveSleep { get; set; } = 20;
 
         /// <summary>
-        /// ±àÂëÀàĞÍ
+        /// ç¼–ç ç±»å‹
         /// </summary>
         public Encoding Encoding { get; set; } = Encoding.UTF8;
 
         /// <summary>
-        /// ¶¨ÒåÎ¯ÍĞ
+        /// å®šä¹‰å§”æ‰˜
         /// </summary>
         public delegate void SerialPortDataReceiveEventArgs(object sender, SerialDataReceivedEventArgs e, byte[] bits);
 
         /// <summary>
-        /// ¶¨Òå½ÓÊÕÊı¾İÊÂ¼ş
+        /// å®šä¹‰æ¥æ”¶æ•°æ®äº‹ä»¶
         /// </summary>
         public event SerialPortDataReceiveEventArgs? DataReceived;
 
         /// <summary>
-        /// ½ÓÊÕÊÂ¼şÊÇ·ñÓĞĞ§ false±íÊ¾ÓĞĞ§
+        /// æ¥æ”¶äº‹ä»¶æ˜¯å¦æœ‰æ•ˆ falseè¡¨ç¤ºæœ‰æ•ˆ
         /// </summary>
         public bool ReceiveEventFlag { get; set; } = false;
 
         /// <summary>
-        /// ÊÇ·ñ´ò¿ª´®¿Ú
+        /// æ˜¯å¦æ‰“å¼€ä¸²å£
         /// </summary>
         public bool IsPortOpen { get { return _serialPort != null && _serialPort.IsOpen; } }
         #endregion
 
-        #region ¹¹Ôì·½·¨
-        #region Ä¬ÈÏ¹¹Ôìº¯Êı£¬²Ù×÷COM1
+        #region æ„é€ æ–¹æ³•
+        #region é»˜è®¤æ„é€ å‡½æ•°ï¼Œæ“ä½œCOM1
         /// <summary>
-        /// Ä¬ÈÏ¹¹Ôìº¯Êı£¬²Ù×÷COM1
+        /// é»˜è®¤æ„é€ å‡½æ•°ï¼Œæ“ä½œCOM1
         /// <para>9600 8 N 1</para>
         /// </summary>
         public SerialPortControl()
@@ -62,9 +62,9 @@ namespace WpfLibrary.SerialPortBase
 
         #endregion
 
-        #region ¹¹Ôìº¯Êı£¬comPortName
+        #region æ„é€ å‡½æ•°ï¼ŒcomPortName
         /// <summary>
-        /// Ä¬ÈÏ¹¹Ôìº¯Êı£¬²Ù×÷COM1
+        /// é»˜è®¤æ„é€ å‡½æ•°ï¼Œæ“ä½œCOM1
         /// <para>9600 8 N 1</para>
         /// </summary>
         /// <param name="comPortName">COM Name</param>
@@ -78,20 +78,22 @@ namespace WpfLibrary.SerialPortBase
                 StopBits = StopBits.One,
                 //RtsEnable = true,
                 //ReadTimeout = 3000,
-                Encoding = Encoding
-                //ÉèÖÃ´¥·¢DataReceivedÊÂ¼şµÄ×Ö½ÚÊıÎª1
+                Encoding = Encoding,
+                //è®¾ç½®è§¦å‘DataReceivedäº‹ä»¶çš„å­—èŠ‚æ•°ä¸º1
                 //ReceivedBytesThreshold = 1
+                ReadBufferSize = 262144,  // 256KB
+                WriteBufferSize = 262144,
             };
             SetSerialPortEvent();
         }
         #endregion
 
-        #region ¹¹Ôìº¯Êı,²Ù×÷comPortName£¬baudRate
+        #region æ„é€ å‡½æ•°,æ“ä½œcomPortNameï¼ŒbaudRate
         /// <summary>
-        /// ¹¹Ôìº¯Êı,²Ù×÷comPortName£¬baudRate
+        /// æ„é€ å‡½æ•°,æ“ä½œcomPortNameï¼ŒbaudRate
         /// </summary>
-        /// <param name="comPortName">ĞèÒª²Ù×÷µÄCOM¿ÚÃû³Æ</param>
-        /// <param name="baudRate">COMµÄ²¨ÌØÂÊ</param>
+        /// <param name="comPortName">éœ€è¦æ“ä½œçš„COMå£åç§°</param>
+        /// <param name="baudRate">COMçš„æ³¢ç‰¹ç‡</param>
         public SerialPortControl(string comPortName, int baudRate)
         {
             _serialPort = new SerialPort(comPortName, baudRate)
@@ -99,62 +101,66 @@ namespace WpfLibrary.SerialPortBase
                 Parity = Parity.None,
                 DataBits = 8,
                 StopBits = StopBits.One,
-                Encoding = Encoding
+                Encoding = Encoding,
+                ReadBufferSize = 262144,  // 256KB
+                WriteBufferSize = 262144,
             };
             SetSerialPortEvent();
         }
         #endregion
 
-        #region ¹¹Ôìº¯Êı,¿ÉÒÔ×Ô¶¨Òå´®¿ÚµÄ³õÊ¼»¯²ÎÊı
+        #region æ„é€ å‡½æ•°,å¯ä»¥è‡ªå®šä¹‰ä¸²å£çš„åˆå§‹åŒ–å‚æ•°
         /// <summary>
-        /// ¹¹Ôìº¯Êı,¿ÉÒÔ×Ô¶¨Òå´®¿ÚµÄ³õÊ¼»¯²ÎÊı
-        /// <para>comPortName£ºĞèÒª²Ù×÷µÄCOM¿ÚÃû³Æ</para>
-        /// <para>baudRate£ºCOMµÄ²¨ÌØÂÊ</para>
-        /// <para>parity£ºÆæÅ¼Ğ£ÑéÎ»</para>
-        /// <para>dataBits£ºÊı¾İÎ»</para>
-        /// <para>stopBits£ºÍ£Ö¹Î»</para>
+        /// æ„é€ å‡½æ•°,å¯ä»¥è‡ªå®šä¹‰ä¸²å£çš„åˆå§‹åŒ–å‚æ•°
+        /// <para>comPortNameï¼šéœ€è¦æ“ä½œçš„COMå£åç§°</para>
+        /// <para>baudRateï¼šCOMçš„æ³¢ç‰¹ç‡</para>
+        /// <para>parityï¼šå¥‡å¶æ ¡éªŒä½</para>
+        /// <para>dataBitsï¼šæ•°æ®ä½</para>
+        /// <para>stopBitsï¼šåœæ­¢ä½</para>
         /// </summary>
         public SerialPortControl(string comPortName, int baudRate, Parity parity, int dataBits, StopBits stopBits)
         {
             _serialPort = new SerialPort(comPortName, baudRate, parity, dataBits, stopBits)
             {
-                Encoding = Encoding
+                Encoding = Encoding,
+                ReadBufferSize = 262144,  // 256KB
+                WriteBufferSize = 262144,
             };
             SetSerialPortEvent();
         }
         #endregion
         #endregion
 
-        #region Ë½ÓĞ·½·¨
+        #region ç§æœ‰æ–¹æ³•
 
         /// <summary>
-        /// ÉèÖÃÊı¾İµÄ½ÓÊÕ
+        /// è®¾ç½®æ•°æ®çš„æ¥æ”¶
         /// </summary>
         private void SetSerialPortEvent()
         {
             if (_serialPort == null) return;
-            //½ÓÊÕµ½Ò»¸ö×Ö½ÚÊ±£¬Ò²»á´¥·¢DataReceivedÊÂ¼ş
+            //æ¥æ”¶åˆ°ä¸€ä¸ªå­—èŠ‚æ—¶ï¼Œä¹Ÿä¼šè§¦å‘DataReceivedäº‹ä»¶
             _serialPort.DataReceived += SerialPort_DataReceived;
-            //½ÓÊÕÊı¾İ³ö´í,´¥·¢ÊÂ¼ş
+            //æ¥æ”¶æ•°æ®å‡ºé”™,è§¦å‘äº‹ä»¶
             _serialPort.ErrorReceived += SerialPort_ErrorReceived;
         }
 
         #endregion
 
-        #region ¹«¿ª·½·¨
-        #region ´ò¿ª´®¿Ú×ÊÔ´
+        #region å…¬å¼€æ–¹æ³•
+        #region æ‰“å¼€ä¸²å£èµ„æº
         /// <summary>
-        /// ´ò¿ª´®¿Ú×ÊÔ´
-        /// <returns>·µ»ØboolÀàĞÍ</returns>
+        /// æ‰“å¼€ä¸²å£èµ„æº
+        /// <returns>è¿”å›boolç±»å‹</returns>
         /// </summary>
         public bool OpenPort()
         {
             bool ok = false;
             if (_serialPort == null) return ok;
-            //Èç¹û´®¿ÚÊÇ´ò¿ªµÄ£¬ÏÈ¹Ø±Õ
+            //å¦‚æœä¸²å£æ˜¯æ‰“å¼€çš„ï¼Œå…ˆå…³é—­
             if (_serialPort.IsOpen)
                 _serialPort.Close();
-            //´ò¿ª´®¿Ú
+            //æ‰“å¼€ä¸²å£
             _serialPort.Open();
             ok = _serialPort.IsOpen;
             return ok;
@@ -162,25 +168,25 @@ namespace WpfLibrary.SerialPortBase
         }
         #endregion
 
-        #region ¹Ø±Õ´®¿Ú×ÊÔ´
+        #region å…³é—­ä¸²å£èµ„æº
         /// <summary>
-        /// ¹Ø±Õ´®¿Ú×ÊÔ´,²Ù×÷Íê³Éºó,Ò»¶¨Òª¹Ø±Õ´®¿Ú
+        /// å…³é—­ä¸²å£èµ„æº,æ“ä½œå®Œæˆå,ä¸€å®šè¦å…³é—­ä¸²å£
         /// </summary>
         public void ClosePort()
         {
-            //Èç¹û´®¿Ú´¦ÓÚ´ò¿ª×´Ì¬,Ôò¹Ø±Õ
+            //å¦‚æœä¸²å£å¤„äºæ‰“å¼€çŠ¶æ€,åˆ™å…³é—­
             if (_serialPort != null && _serialPort.IsOpen)
                 _serialPort.Close();
         }
         #endregion
 
         /// <summary>
-        /// ÉèÖÃ´®¿Ú
-        /// <para>comPortName£ºĞèÒª²Ù×÷µÄCOM¿ÚÃû³Æ</para>
-        /// <para>baudRate£ºCOMµÄ²¨ÌØÂÊ</para>
-        /// <para>parity£ºÆæÅ¼Ğ£ÑéÎ»</para>
-        /// <para>dataBits£ºÊı¾İÎ»</para>
-        /// <para>stopBits£ºÍ£Ö¹Î»</para>
+        /// è®¾ç½®ä¸²å£
+        /// <para>comPortNameï¼šéœ€è¦æ“ä½œçš„COMå£åç§°</para>
+        /// <para>baudRateï¼šCOMçš„æ³¢ç‰¹ç‡</para>
+        /// <para>parityï¼šå¥‡å¶æ ¡éªŒä½</para>
+        /// <para>dataBitsï¼šæ•°æ®ä½</para>
+        /// <para>stopBitsï¼šåœæ­¢ä½</para>
         /// </summary>
         /// <param name="comPortName"></param>
         /// <param name="baudRate"></param>
@@ -201,40 +207,63 @@ namespace WpfLibrary.SerialPortBase
         }
         #endregion
 
-        #region ½ÓÊÜÊÂ¼ş
-        #region ½ÓÊÕ´®¿ÚÊı¾İÊÂ¼ş
+        #region æ¥å—äº‹ä»¶
+        #region æ¥æ”¶ä¸²å£æ•°æ®äº‹ä»¶
         /// <summary>
-        /// ½ÓÊÕ´®¿ÚÊı¾İÊÂ¼ş
+        /// æ¥æ”¶ä¸²å£æ•°æ®äº‹ä»¶
         /// </summary>
+        //private void SerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        //{
+        //    //ç¦æ­¢æ¥æ”¶äº‹ä»¶æ—¶ç›´æ¥é€€å‡º
+        //    if (ReceiveEventFlag) return;
+        //    try
+        //    {
+        //        Thread.Sleep(ReceiveSleep);
+
+        //        byte[] _data = new byte[_serialPort!.BytesToRead];
+
+        //        if (_data.Length == 0) { return; }
+
+        //        _serialPort.Read(_data, 0, _data.Length);           
+
+        //        DataReceived?.Invoke(sender, e, _data);
+        //    }
+        //    catch (Exception ex)
+        //    {
+
+        //        Debug.WriteLine(ex.Message);
+        //        throw;
+
+        //    }
+        //}
+
         private void SerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            //½ûÖ¹½ÓÊÕÊÂ¼şÊ±Ö±½ÓÍË³ö
-            if (ReceiveEventFlag) return;
+            if (ReceiveEventFlag || _serialPort == null || !_serialPort.IsOpen) return;
+
             try
             {
-                Thread.Sleep(ReceiveSleep);
+                int count = _serialPort.BytesToRead;
+                if (count <= 0) return;
 
-                byte[] _data = new byte[_serialPort!.BytesToRead];
-
-                if (_data.Length == 0) { return; }
-
-                _serialPort.Read(_data, 0, _data.Length);           
-
-                DataReceived?.Invoke(sender, e, _data);
+                byte[] buffer = new byte[count];
+                int read = _serialPort.Read(buffer, 0, count);
+                if (read > 0)
+                {
+                    Array.Resize(ref buffer, read);
+                    DataReceived?.Invoke(sender, e, buffer); // å¯èƒ½æ˜¯ 200ã€400ã€600... å­—èŠ‚
+                }
             }
             catch (Exception ex)
             {
-
-                Debug.WriteLine(ex.Message);
-                throw;
-
+                Debug.WriteLine($"[SerialPort] Read error: {ex.Message}");
             }
         }
         #endregion
 
-        #region ½ÓÊÕÊı¾İ³ö´íÊÂ¼ş
+        #region æ¥æ”¶æ•°æ®å‡ºé”™äº‹ä»¶
         /// <summary>
-        /// ½ÓÊÕÊı¾İ³ö´íÊÂ¼ş
+        /// æ¥æ”¶æ•°æ®å‡ºé”™äº‹ä»¶
         /// </summary>
         private void SerialPort_ErrorReceived(object sender, SerialErrorReceivedEventArgs e)
         {
@@ -244,17 +273,17 @@ namespace WpfLibrary.SerialPortBase
         #endregion
         #endregion
 
-        #region ·¢ËÍ·½·¨
-        #region ·¢ËÍÊı¾İstringÀàĞÍ
+        #region å‘é€æ–¹æ³•
+        #region å‘é€æ•°æ®stringç±»å‹
         /// <summary>
-        /// ·¢ËÍÎÄ±¾ĞÍÊı¾İ Ä¬ÈÏ£ºASCII
+        /// å‘é€æ–‡æœ¬å‹æ•°æ® é»˜è®¤ï¼šASCII
         /// </summary>
-        /// <param name="data">´ı·¢ËÍµÄÊı¾İ</param>
-        /// <param name="ishexstring">tureÊ±£¬ÒÔHexÄ£Ê½·¢ËÍ</param>
+        /// <param name="data">å¾…å‘é€çš„æ•°æ®</param>
+        /// <param name="ishexstring">tureæ—¶ï¼Œä»¥Hexæ¨¡å¼å‘é€</param>
         public void SendData(string data, bool ishexstring = false)
         {
-            //·¢ËÍÊı¾İ
-            //½ûÖ¹½ÓÊÕÊÂ¼şÊ±Ö±½ÓÍË³ö
+            //å‘é€æ•°æ®
+            //ç¦æ­¢æ¥æ”¶äº‹ä»¶æ—¶ç›´æ¥é€€å‡º
             if (ReceiveEventFlag)
             {
                 return;
@@ -269,16 +298,16 @@ namespace WpfLibrary.SerialPortBase
                     }
                     else
                     {
-                        // È¥µô¿Õ¸ñ¡¢»»ĞĞ·ûºÍ "0x" Ç°×º
+                        // å»æ‰ç©ºæ ¼ã€æ¢è¡Œç¬¦å’Œ "0x" å‰ç¼€
                         string send_data = Regex.Replace(data, @"\s|0x", "");
-                        // ½«×Ö·û´®×ª»»³É byte Êı×é
+                        // å°†å­—ç¬¦ä¸²è½¬æ¢æˆ byte æ•°ç»„
                         byte[] bytes = new byte[(send_data.Length + 1) / 2];
                         for (int i = 0; i < send_data.Length; i += 2)
                         {
                             bytes[i / 2] = Convert.ToByte(send_data.Substring(i, Math.Min(2, send_data.Length - i)), 16);
                         }
 
-                        // ·¢ËÍÊı¾İ
+                        // å‘é€æ•°æ®
                         _serialPort.Write(bytes, 0, bytes.Length);
                     }
                 }
@@ -292,16 +321,16 @@ namespace WpfLibrary.SerialPortBase
         }
         #endregion
 
-        #region ·¢ËÍÊı¾İbyteÀàĞÍ
+        #region å‘é€æ•°æ®byteç±»å‹
         /// <summary>
-        /// ·¢ËÍ×Ö½ÚĞÍÊı¾İ
+        /// å‘é€å­—èŠ‚å‹æ•°æ®
         /// </summary>
-        /// <param name="data">´ı·¢ËÍµÄÊı¾İ</param>
-        /// <param name="offset">´ÓµÚ¼¸Î»¿ªÊ¼·¢ËÍ</param>
-        /// <param name="count">·¢ËÍ³¤¶È</param>
+        /// <param name="data">å¾…å‘é€çš„æ•°æ®</param>
+        /// <param name="offset">ä»ç¬¬å‡ ä½å¼€å§‹å‘é€</param>
+        /// <param name="count">å‘é€é•¿åº¦</param>
         public void SendData(byte[] data, int offset, int count)
         {
-            //½ûÖ¹½ÓÊÕÊÂ¼şÊ±Ö±½ÓÍË³ö
+            //ç¦æ­¢æ¥æ”¶äº‹ä»¶æ—¶ç›´æ¥é€€å‡º
             if (ReceiveEventFlag)
             {
                 return;
@@ -310,7 +339,7 @@ namespace WpfLibrary.SerialPortBase
             {
                 if (_serialPort!.IsOpen)
                 {
-                    //_serialPort.DiscardInBuffer();//Çå¿Õ½ÓÊÕ»º³åÇø
+                    //_serialPort.DiscardInBuffer();//æ¸…ç©ºæ¥æ”¶ç¼“å†²åŒº
                     _serialPort.Write(data, offset, count);
                 }
             }
@@ -323,14 +352,14 @@ namespace WpfLibrary.SerialPortBase
         }
         #endregion
 
-        #region ·¢ËÍÃüÁî-»Ø´«È·ÈÏ-byte
+        #region å‘é€å‘½ä»¤-å›ä¼ ç¡®è®¤-byte
         /// <summary>
-        /// ·¢ËÍÃüÁî
-        /// byteÈ«¶Ô±È°æ±¾
+        /// å‘é€å‘½ä»¤
+        /// byteå…¨å¯¹æ¯”ç‰ˆæœ¬
         /// </summary>
-        /// <param name="SendData">·¢ËÍÊı¾İ</param>
-        /// <param name="ReceiveData">½ÓÊÕÊı¾İ</param>
-        /// <param name="Overtime">³¬Ê±Ê±¼ä£¬Ä¬ÈÏ500ms</param>
+        /// <param name="SendData">å‘é€æ•°æ®</param>
+        /// <param name="ReceiveData">æ¥æ”¶æ•°æ®</param>
+        /// <param name="Overtime">è¶…æ—¶æ—¶é—´ï¼Œé»˜è®¤500ms</param>
         /// <returns></returns>
         public bool SendCommand(byte[] SendData, byte[] ReceiveData, int Overtime = 500)
         {
@@ -338,15 +367,15 @@ namespace WpfLibrary.SerialPortBase
             {
                 try
                 {
-                    ReceiveEventFlag = true;        //¹Ø±Õ½ÓÊÕÊÂ¼ş
+                    ReceiveEventFlag = true;        //å…³é—­æ¥æ”¶äº‹ä»¶
 
-                    _serialPort.DiscardInBuffer();  //Çå¿Õ½ÓÊÕ»º³åÇø                
+                    _serialPort.DiscardInBuffer();  //æ¸…ç©ºæ¥æ”¶ç¼“å†²åŒº                
 
                     _serialPort.Write(SendData, 0, SendData.Length);
 
                     int num = 0, outtime = Overtime / 10;
 
-                    //ReceiveEventFlag = false;      //´ò¿ªÊÂ¼ş
+                    //ReceiveEventFlag = false;      //æ‰“å¼€äº‹ä»¶
 
                     while (num++ < outtime)
                     {
@@ -358,14 +387,14 @@ namespace WpfLibrary.SerialPortBase
                             _serialPort.Read(receivedata, 0, _serialPort.BytesToRead);
                             if (ByteArrayContains(receivedata, ReceiveData))
                             {
-                                ReceiveEventFlag = false;      //´ò¿ªÊÂ¼ş
+                                ReceiveEventFlag = false;      //æ‰“å¼€äº‹ä»¶
                                 return true;
                             }
                         }
 
                     }
 
-                    ReceiveEventFlag = false;      //´ò¿ªÊÂ¼ş
+                    ReceiveEventFlag = false;      //æ‰“å¼€äº‹ä»¶
                     return false;
                 }
                 catch (Exception ex)
@@ -380,15 +409,15 @@ namespace WpfLibrary.SerialPortBase
         }
         #endregion
 
-        #region ·¢ËÍÃüÁî-»Ø´«È·ÈÏ-string
+        #region å‘é€å‘½ä»¤-å›ä¼ ç¡®è®¤-string
         /// <summary>
-        /// ·¢ËÍÃüÁî
-        /// string¶Ô±È°æ±¾ Ä¬ÈÏÈ«ÏàµÈ¶Ô±È
+        /// å‘é€å‘½ä»¤
+        /// stringå¯¹æ¯”ç‰ˆæœ¬ é»˜è®¤å…¨ç›¸ç­‰å¯¹æ¯”
         /// </summary>
-        /// <param name="SendData">·¢ËÍÊı¾İ</param>
-        /// <param name="ReceiveData">½ÓÊÕÊı¾İ</param>
-        /// <param name="Overtime">³¬Ê±Ê±¼ä£¬Ä¬ÈÏ500ms</param>
-        /// <param name="AllContrast">ÊÇ·ñÈ«¶Ô±È£¬Ä¬ÈÏÈ«¶Ô±È</param>
+        /// <param name="SendData">å‘é€æ•°æ®</param>
+        /// <param name="ReceiveData">æ¥æ”¶æ•°æ®</param>
+        /// <param name="Overtime">è¶…æ—¶æ—¶é—´ï¼Œé»˜è®¤500ms</param>
+        /// <param name="AllContrast">æ˜¯å¦å…¨å¯¹æ¯”ï¼Œé»˜è®¤å…¨å¯¹æ¯”</param>
         /// <returns></returns>
         public bool SendCommand(string SendData, string ReceiveData, int Overtime = 500, bool AllContrast = true)
         {
@@ -396,9 +425,9 @@ namespace WpfLibrary.SerialPortBase
             {
                 try
                 {
-                    ReceiveEventFlag = true;        //¹Ø±Õ½ÓÊÕÊÂ¼ş
+                    ReceiveEventFlag = true;        //å…³é—­æ¥æ”¶äº‹ä»¶
 
-                    _serialPort.DiscardInBuffer();  //Çå¿Õ½ÓÊÕ»º³åÇø                
+                    _serialPort.DiscardInBuffer();  //æ¸…ç©ºæ¥æ”¶ç¼“å†²åŒº                
 
                     _serialPort.Write(SendData);
 
@@ -414,13 +443,13 @@ namespace WpfLibrary.SerialPortBase
                         {
                             byte[] receivedata = new byte[_serialPort.BytesToRead];
                             _serialPort.Read(receivedata, 0, _serialPort.BytesToRead);
-                            // ½ÓÊÕÎÄ±¾
+                            // æ¥æ”¶æ–‡æœ¬
                             string recdata = Encoding.Default.GetString(receivedata);
 
-                            // ÅĞ¶ÏÏàµÈ
+                            // åˆ¤æ–­ç›¸ç­‰
                             if (AllContrast)
                             {
-                                // ²»ÏàµÈ ¼ÌĞøÑ­»·
+                                // ä¸ç›¸ç­‰ ç»§ç»­å¾ªç¯
                                 if (!string.Equals(recdata, ReceiveData, StringComparison.Ordinal))
                                     continue;
                             }
@@ -429,13 +458,13 @@ namespace WpfLibrary.SerialPortBase
                                 if (!recdata.Contains(ReceiveData))
                                     continue;
                             }
-                            ReceiveEventFlag = false;      //´ò¿ªÊÂ¼ş
+                            ReceiveEventFlag = false;      //æ‰“å¼€äº‹ä»¶
                             return true;
                         }
 
                     }
 
-                    ReceiveEventFlag = false;      //´ò¿ªÊÂ¼ş
+                    ReceiveEventFlag = false;      //æ‰“å¼€äº‹ä»¶
                     return false;
                 }
                 catch (Exception ex)
@@ -451,20 +480,20 @@ namespace WpfLibrary.SerialPortBase
         #endregion
         #endregion
 
-        #region ¾²Ì¬·½·¨
+        #region é™æ€æ–¹æ³•
 
         /// <summary>
-        /// »ñÈ¡¿ÉÓÃ´®¿ÚÃû³Æ
+        /// è·å–å¯ç”¨ä¸²å£åç§°
         /// </summary>
         /// <returns></returns>
         public static List<string> GetPortNames() => new(SerialPort.GetPortNames());
 
-        #region ±È½Ï×Ö½Ú£¨±©Á¦±È½Ï£©
+        #region æ¯”è¾ƒå­—èŠ‚ï¼ˆæš´åŠ›æ¯”è¾ƒï¼‰
         /// <summary>
-        /// Byte±È½Ï
+        /// Byteæ¯”è¾ƒ
         /// </summary>
-        /// <param name="source">´ıÅĞ¶Ï</param>
-        /// <param name="pattern">Ä¿±ê</param>
+        /// <param name="source">å¾…åˆ¤æ–­</param>
+        /// <param name="pattern">ç›®æ ‡</param>
         /// <returns></returns>
         public static bool ByteArrayContains(byte[] source, byte[] pattern)
         {
@@ -493,9 +522,9 @@ namespace WpfLibrary.SerialPortBase
         }
         #endregion
 
-        #region Ê®Áù½øÖÆ×Ö·û´®×ª×Ö½ÚĞÍ
+        #region åå…­è¿›åˆ¶å­—ç¬¦ä¸²è½¬å­—èŠ‚å‹
         /// <summary>
-        /// °ÑÊ®Áù½øÖÆ×Ö·û´®×ª»»³É×Ö½ÚĞÍ(·½·¨1)
+        /// æŠŠåå…­è¿›åˆ¶å­—ç¬¦ä¸²è½¬æ¢æˆå­—èŠ‚å‹(æ–¹æ³•1)
         /// </summary>
         /// <param name="InString"></param>
         /// <returns></returns>
@@ -515,9 +544,9 @@ namespace WpfLibrary.SerialPortBase
         }
         #endregion
 
-        #region Ê®Áù½øÖÆ×Ö·û´®×ª×Ö½ÚĞÍ
+        #region åå…­è¿›åˆ¶å­—ç¬¦ä¸²è½¬å­—èŠ‚å‹
         /// <summary>
-        /// ×Ö·û´®×ª16½øÖÆ×Ö½ÚÊı×é(·½·¨2)
+        /// å­—ç¬¦ä¸²è½¬16è¿›åˆ¶å­—èŠ‚æ•°ç»„(æ–¹æ³•2)
         /// </summary>
         /// <param name="hexString"></param>
         /// <returns></returns>
@@ -533,9 +562,9 @@ namespace WpfLibrary.SerialPortBase
         }
         #endregion
 
-        #region Ê®Áù½øÖÆ×Ö·û´®×ª×Ö½ÚĞÍ
+        #region åå…­è¿›åˆ¶å­—ç¬¦ä¸²è½¬å­—èŠ‚å‹
         /// <summary>
-        /// string×ªbyte
+        /// stringè½¬byte
         /// </summary>
         /// <param name="hexString"></param>
         /// <returns></returns>
@@ -551,12 +580,12 @@ namespace WpfLibrary.SerialPortBase
         }
         #endregion
 
-        #region ×Ö½ÚĞÍ×ªÊ®Áù½øÖÆ×Ö·û´®
+        #region å­—èŠ‚å‹è½¬åå…­è¿›åˆ¶å­—ç¬¦ä¸²
         /// <summary>
-        /// ×Ö½ÚÊı×é×ª16½øÖÆ×Ö·û´®1
+        /// å­—èŠ‚æ•°ç»„è½¬16è¿›åˆ¶å­—ç¬¦ä¸²1
         /// </summary>
         /// <param name="bytes"></param>
-        /// <returns>ÎŞ¿Õ¸ñ16½øÖÆ×Ö·û´®</returns>
+        /// <returns>æ— ç©ºæ ¼16è¿›åˆ¶å­—ç¬¦ä¸²</returns>
         public static string ByteToHexStr(byte[] bytes)
         {
             string returnStr = "";
@@ -571,12 +600,12 @@ namespace WpfLibrary.SerialPortBase
         }
         #endregion
 
-        #region ×Ö½ÚĞÍ×ªÊ®Áù½øÖÆ×Ö·û´®
+        #region å­—èŠ‚å‹è½¬åå…­è¿›åˆ¶å­—ç¬¦ä¸²
         /// <summary>
-        /// ×Ö½ÚĞÍ×ª»»³ÉÊ®Áù½øÖÆ×Ö·û´®2
+        /// å­—èŠ‚å‹è½¬æ¢æˆåå…­è¿›åˆ¶å­—ç¬¦ä¸²2
         /// </summary>
         /// <param name="InBytes"></param>
-        /// <returns>´ø¿Õ¸ñ16½øÖÆ×Ö·û´®</returns>
+        /// <returns>å¸¦ç©ºæ ¼16è¿›åˆ¶å­—ç¬¦ä¸²</returns>
         public static string ByteToString(byte[] InBytes)
         {
             string StringOut = "";
@@ -588,12 +617,12 @@ namespace WpfLibrary.SerialPortBase
         }
         #endregion
 
-        #region CRCËã·¨16-µçÑ¹Æ÷
+        #region CRCç®—æ³•16-ç”µå‹å™¨
         /// <summary>
-        /// CRC16Ëã·¨-µçÑ¹Æ÷
+        /// CRC16ç®—æ³•-ç”µå‹å™¨
         /// </summary>
         /// <param name="hexString"></param>
-        /// <returns>stringĞÍ Ô­×Ö½Ú+¼ÆËã×Ö½Ú</returns>
+        /// <returns>stringå‹ åŸå­—èŠ‚+è®¡ç®—å­—èŠ‚</returns>
         public static string CalculateCRC16(string hexString)
         {
             byte[] data = StringToByteArray(hexString);
@@ -614,16 +643,16 @@ namespace WpfLibrary.SerialPortBase
                 }
             }
             byte[] crcBytes = BitConverter.GetBytes(crc);
-            //Array.Reverse(crcBytes); // ĞèÒª·­×ª×Ö½ÚĞò
+            //Array.Reverse(crcBytes); // éœ€è¦ç¿»è½¬å­—èŠ‚åº
             string crcString = Convert.ToHexString(crcBytes);
             return hexString + crcString;
         }
 
         /// <summary>
-        /// CRC16Ëã·¨
+        /// CRC16ç®—æ³•
         /// </summary>
         /// <param name="hexString"></param>
-        /// <returns>string ¼ÆËã×Ö½Ú</returns>
+        /// <returns>string è®¡ç®—å­—èŠ‚</returns>
         public static string GetCRC16(string hexString)
         {
             byte[] data = StringToByteArray(hexString);
@@ -644,7 +673,7 @@ namespace WpfLibrary.SerialPortBase
                 }
             }
             byte[] crcBytes = BitConverter.GetBytes(crc);
-            //Array.Reverse(crcBytes); // ĞèÒª·­×ª×Ö½ÚĞò
+            //Array.Reverse(crcBytes); // éœ€è¦ç¿»è½¬å­—èŠ‚åº
             string crcString = Convert.ToHexString(crcBytes);
             return crcString;
         }
@@ -652,13 +681,13 @@ namespace WpfLibrary.SerialPortBase
 
         #endregion
 
-        #region CRC-16/MODBUSËã·¨
+        #region CRC-16/MODBUSç®—æ³•
 
         /// <summary>
-        /// CRC-16/MODBUSËã·¨
+        /// CRC-16/MODBUSç®—æ³•
         /// </summary>
-        /// <param name="data"> Óû¼ÆËã×Ö½Ú</param>
-        /// <returns>string ¼ÆËã×Ö½Ú</returns>
+        /// <param name="data"> æ¬²è®¡ç®—å­—èŠ‚</param>
+        /// <returns>string è®¡ç®—å­—èŠ‚</returns>
         public static string GetCRC16MODBUS(byte[] data)
         {
 
@@ -682,16 +711,16 @@ namespace WpfLibrary.SerialPortBase
                 }
             }
             byte[] crcBytes = BitConverter.GetBytes(crc);
-            //Array.Reverse(crcBytes); // ĞèÒª·­×ª×Ö½ÚĞò
+            //Array.Reverse(crcBytes); // éœ€è¦ç¿»è½¬å­—èŠ‚åº
             string crcString = Convert.ToHexString(crcBytes);
             return crcString;
         }
 
         /// <summary>
-        /// CRC-16/MODBUSËã·¨
+        /// CRC-16/MODBUSç®—æ³•
         /// </summary>
-        /// <param name="data"> Óû¼ÆËã×Ö½Ú(ÎÄ±¾ĞÍ)</param>
-        /// <returns>string ¼ÆËã×Ö½Ú</returns>
+        /// <param name="data"> æ¬²è®¡ç®—å­—èŠ‚(æ–‡æœ¬å‹)</param>
+        /// <returns>string è®¡ç®—å­—èŠ‚</returns>
         public static string GetCRC16MODBUS(string hexString)
         {
             byte[] data = StringToByteArray(hexString);
@@ -715,7 +744,7 @@ namespace WpfLibrary.SerialPortBase
                 }
             }
             byte[] crcBytes = BitConverter.GetBytes(crc);
-            //Array.Reverse(crcBytes); // ĞèÒª·­×ª×Ö½ÚĞò
+            //Array.Reverse(crcBytes); // éœ€è¦ç¿»è½¬å­—èŠ‚åº
             string crcString = BitConverter.ToString(crcBytes).Replace("-", "");
             return crcString;
         }
@@ -727,7 +756,7 @@ namespace WpfLibrary.SerialPortBase
         /// <returns></returns>
         public static byte[] GetModbusCrc16(byte[] bytes)
         {
-            const ushort poly = 0xA001; // ¶àÏîÊ½£¨0x8005µÄÎ»·´×ªĞÎÊ½£©
+            const ushort poly = 0xA001; // å¤šé¡¹å¼ï¼ˆ0x8005çš„ä½åè½¬å½¢å¼ï¼‰
             ushort crc = 0xFFFF;
 
             foreach (byte b in bytes)
@@ -747,7 +776,7 @@ namespace WpfLibrary.SerialPortBase
                 }
             }
 
-            // ·µ»ØĞ¡¶ËĞò×Ö½Ú
+            // è¿”å›å°ç«¯åºå­—èŠ‚
             return [(byte)(crc & 0xFF), (byte)(crc >> 8)];
         }
 
@@ -776,9 +805,9 @@ namespace WpfLibrary.SerialPortBase
 
         #endregion
 
-        #region ÀÛ¼ÓºÍĞ£Ñé
+        #region ç´¯åŠ å’Œæ ¡éªŒ
         /// <summary>
-        /// ÀÛ¼ÓºÍĞ£Ñé
+        /// ç´¯åŠ å’Œæ ¡éªŒ
         /// </summary>
         /// <param name="data"></param>
         /// <returns>byte</returns>
@@ -793,9 +822,9 @@ namespace WpfLibrary.SerialPortBase
         }
 
         /// <summary>
-        /// ÀÛ¼ÓºÍĞ£Ñé
+        /// ç´¯åŠ å’Œæ ¡éªŒ
         /// </summary>
-        /// <param name="hexString">Ê®Áù½øÖÆÎÄ±¾</param>
+        /// <param name="hexString">åå…­è¿›åˆ¶æ–‡æœ¬</param>
         /// <returns>byte</returns>
         public static byte SumToByte(string hexString)
         {
@@ -809,7 +838,7 @@ namespace WpfLibrary.SerialPortBase
         }
 
         /// <summary>
-        /// ÀÛ¼ÓºÍĞ£Ñé
+        /// ç´¯åŠ å’Œæ ¡éªŒ
         /// </summary>
         /// <param name="data"></param>
         /// <returns>string</returns>
@@ -824,9 +853,9 @@ namespace WpfLibrary.SerialPortBase
         }
 
         /// <summary>
-        /// ÀÛ¼ÓºÍĞ£Ñé
+        /// ç´¯åŠ å’Œæ ¡éªŒ
         /// </summary>
-        /// <param name="hexString">Ê®Áù½øÖÆÎÄ±¾</param>
+        /// <param name="hexString">åå…­è¿›åˆ¶æ–‡æœ¬</param>
         /// <returns>string</returns>
         public static string SumToString(string hexString)
         {
@@ -840,78 +869,78 @@ namespace WpfLibrary.SerialPortBase
         }
         #endregion
 
-        #region Ö»ÔÊĞíÊı×ÖºÍABCDEF
+        #region åªå…è®¸æ•°å­—å’ŒABCDEF
         /// <summary>
-        /// ÕıÔò±í´ïÊ½ÅĞ¶ÏÖ»ÔÊĞíÊı×ÖºÍABCDEF
+        /// æ­£åˆ™è¡¨è¾¾å¼åˆ¤æ–­åªå…è®¸æ•°å­—å’ŒABCDEF
         /// </summary>
         /// <param name="text"></param>
-        /// <returns>trueÎª²»·ûºÏ falseÎª·ûºÏ</returns>
+        /// <returns>trueä¸ºä¸ç¬¦åˆ falseä¸ºç¬¦åˆ</returns>
         public static bool IsTextAllowed(string text)
         {
-            Regex regex = new("[0-9a-fA-F]+$"); // Ö»ÔÊĞíÊı×ÖºÍABCDEF
+            Regex regex = new("[0-9a-fA-F]+$"); // åªå…è®¸æ•°å­—å’ŒABCDEF
             return regex.IsMatch(text);
         }
         #endregion
 
         /// <summary>
-        /// ´Ó×Ö½ÚÊı×éÖĞÖ¸¶¨Î»ÖÃÈ¡³ö4¸ö×Ö½Ú£¬²¢°´´ó¶ËĞò×ª»»³Éint¡£
+        /// ä»å­—èŠ‚æ•°ç»„ä¸­æŒ‡å®šä½ç½®å–å‡º4ä¸ªå­—èŠ‚ï¼Œå¹¶æŒ‰å¤§ç«¯åºè½¬æ¢æˆintã€‚
         /// </summary>
-        /// <param name="byteArray">×Ö½ÚÊı×é¡£</param>
-        /// <param name="startIndex">ÆğÊ¼Î»ÖÃ£¨´Ó0¿ªÊ¼¼ÆÊı£©¡£</param>
-        /// <returns>×ª»»ºóµÄintÖµ¡£</returns>
+        /// <param name="byteArray">å­—èŠ‚æ•°ç»„ã€‚</param>
+        /// <param name="startIndex">èµ·å§‹ä½ç½®ï¼ˆä»0å¼€å§‹è®¡æ•°ï¼‰ã€‚</param>
+        /// <returns>è½¬æ¢åçš„intå€¼ã€‚</returns>
         public static int BytesToInt32BigEndian(byte[] byteArray, int startIndex)
         {
             if (byteArray.Length < startIndex + 4)
             {
-                Debug.WriteLine("byteArray³¤¶È²»×ã");
+                Debug.WriteLine("byteArrayé•¿åº¦ä¸è¶³");
                 return -1;
             }
-            // ´ÓÖ¸¶¨Î»ÖÃÈ¡³ö4¸ö×Ö½Ú
+            // ä»æŒ‡å®šä½ç½®å–å‡º4ä¸ªå­—èŠ‚
             byte[] intBytes = new byte[4];
             Array.Copy(byteArray, startIndex, intBytes, 0, 4);
 
-            // Èç¹ûÏµÍ³ÊÇĞ¡¶ËĞò£¬Ôò·´×ª×Ö½ÚË³ĞòÒÔ·ûºÏ´ó¶ËĞò
+            // å¦‚æœç³»ç»Ÿæ˜¯å°ç«¯åºï¼Œåˆ™åè½¬å­—èŠ‚é¡ºåºä»¥ç¬¦åˆå¤§ç«¯åº
             if (BitConverter.IsLittleEndian)
             {
                 Array.Reverse(intBytes);
             }
 
-            // ½«×Ö½ÚÊı×é×ª»»³Éint
+            // å°†å­—èŠ‚æ•°ç»„è½¬æ¢æˆint
             int result = BitConverter.ToInt32(intBytes, 0);
 
             return result;
         }
         /// <summary>
-        /// ´Ó×Ö½ÚÊı×éÖĞÖ¸¶¨Î»ÖÃÈ¡³ö2¸ö×Ö½Ú£¬²¢°´´ó¶ËĞò×ª»»³Éint16¡£
+        /// ä»å­—èŠ‚æ•°ç»„ä¸­æŒ‡å®šä½ç½®å–å‡º2ä¸ªå­—èŠ‚ï¼Œå¹¶æŒ‰å¤§ç«¯åºè½¬æ¢æˆint16ã€‚
         /// </summary>
-        /// <param name="byteArray">×Ö½ÚÊı×é¡£</param>
-        /// <param name="startIndex">ÆğÊ¼Î»ÖÃ£¨´Ó0¿ªÊ¼¼ÆÊı£©¡£</param>
-        /// <returns>×ª»»ºóµÄintÖµ¡£</returns>
+        /// <param name="byteArray">å­—èŠ‚æ•°ç»„ã€‚</param>
+        /// <param name="startIndex">èµ·å§‹ä½ç½®ï¼ˆä»0å¼€å§‹è®¡æ•°ï¼‰ã€‚</param>
+        /// <returns>è½¬æ¢åçš„intå€¼ã€‚</returns>
         public static short BytesToInt16BigEndian(byte[] byteArray, int startIndex)
         {
             if (byteArray.Length < startIndex + 2)
             {
-                Debug.WriteLine("byteArray³¤¶È²»×ã");
+                Debug.WriteLine("byteArrayé•¿åº¦ä¸è¶³");
                 return -1;
             }
-            // ´ÓÖ¸¶¨Î»ÖÃÈ¡³ö4¸ö×Ö½Ú
+            // ä»æŒ‡å®šä½ç½®å–å‡º4ä¸ªå­—èŠ‚
             byte[] intBytes = new byte[2];
             Array.Copy(byteArray, startIndex, intBytes, 0, 2);
 
-            // Èç¹ûÏµÍ³ÊÇĞ¡¶ËĞò£¬Ôò·´×ª×Ö½ÚË³ĞòÒÔ·ûºÏ´ó¶ËĞò
+            // å¦‚æœç³»ç»Ÿæ˜¯å°ç«¯åºï¼Œåˆ™åè½¬å­—èŠ‚é¡ºåºä»¥ç¬¦åˆå¤§ç«¯åº
             if (BitConverter.IsLittleEndian)
             {
                 Array.Reverse(intBytes);
             }
 
-            // ½«×Ö½ÚÊı×é×ª»»³Éint
+            // å°†å­—èŠ‚æ•°ç»„è½¬æ¢æˆint
             short result = BitConverter.ToInt16(intBytes, 0);
 
             return result;
         }
         #endregion
 
-        #region ×¢Ïú·½·¨
+        #region æ³¨é”€æ–¹æ³•
         public void Dispose()
         {
             Dispose(true);
@@ -928,9 +957,9 @@ namespace WpfLibrary.SerialPortBase
                     {
                         _serialPort.Close();
                     }
-                    //½ÓÊÕµ½Ò»¸ö×Ö½ÚÊ±£¬Ò²»á´¥·¢DataReceivedÊÂ¼ş
+                    //æ¥æ”¶åˆ°ä¸€ä¸ªå­—èŠ‚æ—¶ï¼Œä¹Ÿä¼šè§¦å‘DataReceivedäº‹ä»¶
                     _serialPort.DataReceived -= SerialPort_DataReceived;
-                    //½ÓÊÕÊı¾İ³ö´í,´¥·¢ÊÂ¼ş
+                    //æ¥æ”¶æ•°æ®å‡ºé”™,è§¦å‘äº‹ä»¶
                     _serialPort.ErrorReceived -= SerialPort_ErrorReceived;
                     _serialPort.Dispose();
                 }
